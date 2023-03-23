@@ -52,6 +52,7 @@ int main(int argc, const char * argv[])
         for(j=0;j<7;j++)print<<scientific<<setprecision(6)<<A[i][j]<<"   ";
         print<<" "<<endl;
     }
+
     //parametros de entrada
     cout<< "Introduzca tiempo de la simulación en años"<<endl;
     cin>>Ty;
@@ -78,8 +79,8 @@ int main(int argc, const char * argv[])
     pi = false;
     //sistema de referencia heliocentrico o geocentrico
     helio = true;
-    // Posiciones&velocidades iniciales
 
+    // Posiciones&velocidades iniciales
     if(pi){
     for(i=1;i<3;i++){
         P[i][1] = A[i][1];
@@ -109,8 +110,10 @@ int main(int argc, const char * argv[])
     for(i=1;i<10;i++){
         P[i][0] = A[i][1]; V[i][1] = -A[i][6];   P[i][1] = 0;V[i][0] = 0;
     }}
+
     //Sun position
-    P[0][0] = 0;P[0][1] = 0; 
+    P[0][0] = 0;
+    P[0][1] = 0; 
 
     //Initialize to 0 some parameters
     for(i=1;i<10;i++){for(k=0;k<2;k++){
@@ -154,6 +157,7 @@ int main(int argc, const char * argv[])
 
         //Aceleracion Nueva
         for(i=1;i<10;i++){for(k=0;k<2;k++){Ac[i][k] = 0 ;}}
+        
         for(k=0;k<2;k++){
             for(i=1;i<10;i++){
                 for(j=0;j<10;j++){
@@ -182,7 +186,11 @@ int main(int argc, const char * argv[])
             }
         }
 
-        for(i=1;i<10;i++){for(k=0;k<3;k++){E[i][k] = 0;}}
+        for(i=1;i<10;i++){
+            for(k=0;k<3;k++){
+                E[i][k] = 0;
+            }
+        }
 
         //Calculo de Energía
         SumaE = 0;
