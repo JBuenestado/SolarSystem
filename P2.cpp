@@ -8,8 +8,6 @@
 
 using namespace std;
 
-void CSV(string arch);
-
 int main() {
     int i, j, k;
     double A[10][7], P[10][2], Ac[10][2], V[10][2], W[10][2], T[10][2], E[10][3];
