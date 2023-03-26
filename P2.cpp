@@ -1,49 +1,42 @@
 // Code by Jorge Buenestado, 22/02/2023
 
 #include <iostream>
-#include <cstring>
 #include <fstream>
 #include <string>
 #include <iomanip>
-#include <cstdlib>
-#include <ctime>
 #include <cmath>
-#include <sstream>
 
 using namespace std;
 
 void CSV(string arch);
 
-int main(int argc, const char *argv[]) {
+int main() {
     int i, j, k;
     double A[10][7], P[10][2], Ac[10][2], V[10][2], W[10][2], T[10][2], E[10][3];
-    double G, Ms, c, test, pasos, n, timer, d, Ty, Ts, h, Ene, SumaE;
+    double  pasos, n, timer, Ty, Ts, h, Ene, SumaE, geox, geoy, NumeroAstros;
     bool pi, helio;
     ifstream fich;
-    ofstream print, pr, pr1, pr2, pr3, pr4, pr5, pr6, pr7, pr8, pr9, pre;
-    srand(time(0));
-
+    ofstream print, pr, pr0, pr1, pr2, pr3, pr4, pr5, pr6, pr7, pr8, pr9, pre, Pr[10];
+    string Astros[10] = {"PSun.txt.txt", "PMercury.txt", "PVenus.txt", "Ptierra.txt", "PMars.txt",
+                         "PJupiter.txt", "PSaturn.txt", "PUranus.txt", "PNeptune.txt", "Pluto.txt"};
+    NumeroAstros = 10;
     //definimos nuestras constantes
-    G = 6.67e-11;
-    Ms = 1.99e30;
-    c = 1.496e11;
+    const double G = 6.67e-11;
+    const double Ms = 1.99e30;
+    const double c = 1.496e11;
 
     //Abrimos los archivos
     print.open("Periodos y Prueba.txt");
     pre.open("Energia.txt");
-    pr.open("PSun.txt");
-    pr1.open("PMercury.txt");
-    pr2.open("PVenus.txt");
-    pr3.open("Ptierra.txt");
-    pr4.open("PMars.txt");
-    pr5.open("PJupiter.txt");
-    pr6.open("PSaturn.txt");
-    pr7.open("PUranus.txt");
-    pr8.open("PNeptune.txt");
-    pr9.open("PPluto.txt");
+
+    for(i = 0; i < NumeroAstros; i++){
+        Pr[i].open(Astros[i]);
+    }
 
     //leemos el fichero con los datos
     fich.open("./planetas.txt");
+    if(fich.is_open()) cout<<"File opened successfuly."<<endl; 
+    else cout<<"Error reading file."<<endl;
     for (i = 0; i < 10; i++) { for (j = 0; j < 7; j++)fich >> A[i][j]; }
     fich.close();
 
@@ -56,11 +49,13 @@ int main(int argc, const char *argv[]) {
 
     //parametros de entrada
     cout << "Introduzca tiempo de la simulación en años" << endl;
-    cin >> Ty;
+    //cin >> Ty;
+    Ty = 5;
     //años a segundos
     Ts = Ty * 24 * 365 * 3600;
     cout << "Introduzca timestep en días" << endl;
-    cin >> h;
+    //cin >> h;
+    h = 1;
     h = h * 24 * 3600;
 
     //Cambio Variables
@@ -79,7 +74,7 @@ int main(int argc, const char *argv[]) {
     //Pi = posiciones iniciales, en una recta o en los cuatro ejes si true
     pi = false;
     //sistema de referencia heliocentrico o geocentrico
-    helio = true;
+    helio = false;
 
     // Posiciones&velocidades iniciales
     if (pi) {
@@ -153,29 +148,17 @@ int main(int argc, const char *argv[]) {
         }
 
         //Imprimimos la posicion de cada planeta segun  sistema de referencia
-        if (helio) {
-            pr << P[0][0] << " " << P[0][1] << endl;
-            pr1 << P[1][0] << " " << P[1][1] << endl;
-            pr2 << P[2][0] << " " << P[2][1] << endl;
-            pr3 << P[3][0] << " " << P[3][1] << endl;
-            pr4 << P[4][0] << " " << P[4][1] << endl;
-            pr5 << P[5][0] << " " << P[5][1] << endl;
-            pr6 << P[6][0] << " " << P[6][1] << endl;
-            pr7 << P[7][0] << " " << P[7][1] << endl;
-            pr8 << P[8][0] << " " << P[8][1] << endl;
-            pr9 << P[9][0] << " " << P[9][1] << endl;
+        if (!helio) {
+            geox = P[3][0];
+            geoy = P[3][1];
         } else {
-            pr << P[0][0] - P[3][0] << " " << P[0][1] - P[3][1] << endl;
-            pr1 << P[1][0] - P[3][0] << " " << P[1][1] - P[3][1] << endl;
-            pr2 << P[2][0] - P[3][0] << " " << P[2][1] - P[3][1] << endl;
-            pr3 << P[3][0] - P[3][0] << " " << P[3][1] - P[3][1] << endl;
-            pr4 << P[4][0] - P[3][0] << " " << P[4][1] - P[3][1] << endl;
-            pr5 << P[5][0] - P[3][0] << " " << P[5][1] - P[3][1] << endl;
-            pr6 << P[6][0] - P[3][0] << " " << P[6][1] - P[3][1] << endl;
-            pr7 << P[7][0] - P[3][0] << " " << P[7][1] - P[3][1] << endl;
-            pr8 << P[8][0] - P[3][0] << " " << P[8][1] - P[3][1] << endl;
-            pr9 << P[9][0] - P[3][0] << " " << P[9][1] - P[3][1] << endl;
+            geox = 0;
+            geoy = 0;
         }
+
+        for (i = 1; i < 10; i++) {
+            Pr[i] << P[i][0] -geox << " " << P[i][1]- geoy <<endl;
+        };
 
         //Aceleracion Nueva
         for (i = 1; i < 10; i++) { for (k = 0; k < 2; k++) { Ac[i][k] = 0; }}
@@ -217,17 +200,18 @@ int main(int argc, const char *argv[]) {
 
         //Calculo de Energía
         SumaE = 0;
+        Ene = 0;
         for (i = 1; i < 10; i++) {
             for (j = 0; j < 10; j++) {
                 if (i != j) {
                     //Potencial
-                    E[i][1] +=
+                    E[i][0] +=
                             G * (A[i][2] * A[j][2]) / (sqrt((pow(P[i][0] - P[j][0], 2)) + pow(P[i][1] - P[j][1], 2)));
                     Ene += E[i][1];
                 }
                 //Cinética
-                E[i][2] = A[i][2] * (V[i][0] * V[i][0] + V[i][1] * V[i][1]) / (2 - Ene);
-                SumaE += E[i][2];
+                E[i][1] = A[i][2] * (V[i][0] * V[i][0] + V[i][1] * V[i][1]) / (2 - Ene);
+                SumaE += E[i][1];
             }
         }
         //Sacamos el output al fichero de energía con tiempo, reconvirtiendo al SI
@@ -246,15 +230,10 @@ int main(int argc, const char *argv[]) {
     //cerramos los ficheros
     print.close();
     pre.close();
-    pr.close();
-    pr1.close();
-    pr2.close();
-    pr3.close();
-    pr4.close();
-    pr5.close();
-    pr6.close();
-    pr7.close();
-    pr8.close();
-    pr9.close();
+
+    for(i = 0; i < NumeroAstros; i++){
+        Pr[i].close();
+    }
+
     return 0;
 }

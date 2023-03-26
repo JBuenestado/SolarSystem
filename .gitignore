@@ -1,2 +1,7 @@
 ignore
 P1
+P2
+settings.json
+info.plist
+.DS_Store
+*txt
