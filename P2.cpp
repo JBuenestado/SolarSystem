@@ -9,15 +9,16 @@
 using namespace std;
 
 int main() {
-    int i, j, k;
+    int i, j, k, n;
     double A[10][7], P[10][2], Ac[10][2], V[10][2], W[10][2], T[10][2], E[10][3];
-    double  pasos, n, timer, Ty, Ts, h, Ene, SumaE, geox, geoy, NumeroAstros;
-    bool pi, helio;
+    double  steps, timer, Ty, Ts, h, Ene, SumaE, geox, geoy, NumeroAstros;
+    bool lineStart, helio;
     ifstream fich;
     ofstream print, pr, pr0, pr1, pr2, pr3, pr4, pr5, pr6, pr7, pr8, pr9, pre, Pr[10];
     string Astros[10] = {"PSun.txt.txt", "PMercury.txt", "PVenus.txt", "Ptierra.txt", "PMars.txt",
                          "PJupiter.txt", "PSaturn.txt", "PUranus.txt", "PNeptune.txt", "Pluto.txt"};
     NumeroAstros = 10;
+
     //definimos nuestras constantes
     const double G = 6.67e-11;
     const double Ms = 1.99e30;
@@ -47,8 +48,8 @@ int main() {
 
     //parametros de entrada
     cout << "Introduzca tiempo de la simulación en años" << endl;
-    //cin >> Ty;
-    Ty = 5;
+    //cin >> totalTime;
+    totalTime = 5;
     //años a segundos
     Ts = Ty * 24 * 365 * 3600;
     cout << "Introduzca timestep en días" << endl;
@@ -59,7 +60,7 @@ int main() {
     //Cambio Variables
     Ts = Ts * sqrt(G * Ms / (c * c * c));
     h = h * sqrt(G * Ms / (c * c * c));
-    pasos = Ts / h;
+    steps = Ts / h;
     //Cambiamos de unidades del fichero
     for (i = 0; i < 10; i++) {
         A[i][1] = A[i][1] * 10e8 / c; //radio
@@ -69,43 +70,30 @@ int main() {
         A[i][6] = A[i][6] * 1000 / sqrt(G * Ms / c); //velocidad m*s
     }
 
-    //Pi = posiciones iniciales, en una recta o en los cuatro ejes si true
-    pi = false;
+    //lineStart si quieres que todos los planetas empiecen en una misma línea
+    lineStart = true;
     //sistema de referencia heliocentrico o geocentrico
     helio = false;
 
     // Posiciones&velocidades iniciales
-    if (pi) {
-        for (i = 1; i < 3; i++) {
-            P[i][1] = A[i][1];
-            V[i][0] = -A[i][6];
-            P[i][0] = 0;
-            V[i][1] = 0;
-        }
-        for (i = 3; i < 5; i++) {
+    if (lineStart) {
+        for(i = 1; i < 10; i++)
+        {
             P[i][0] = A[i][1];
-            V[i][1] = A[i][6];
-            P[i][1] = 0;
-            V[i][0] = 0;
-        }
-        for (i = 5; i < 7; i++) {
-            P[i][1] = -A[i][1];
-            V[i][0] = -A[i][6];
-            P[i][0] = 0;
-            V[i][1] = 0;
-        }
-        for (i = 7; i < 9; i++) {
-            P[i][0] = -A[i][1];
-            V[i][1] = A[i][6];
+            V[i][1] = -A[i][6];
             P[i][1] = 0;
             V[i][0] = 0;
         }
     } else {
         for (i = 1; i < 10; i++) {
-            P[i][0] = A[i][1];
-            V[i][1] = -A[i][6];
-            P[i][1] = 0;
-            V[i][0] = 0;
+            if(i%4 >= 2){
+                P[i][0] =  pow(-1, i)*A[i][1];
+                V[i][1] =  pow(-1, i+1)*A[i][6];
+            }
+            else{
+                P[i][1] =  pow(-1, i)*A[i][1];
+                V[i][1] =  pow(-1, i+1)*A[i][6];
+            }    
         }
     }
 
@@ -122,7 +110,6 @@ int main() {
     }
     timer = 0;
 
-    //bucle k para eje x y para eje y //i coordinate means planet, j coordinates indicates x or y
     //Aceleración Inicial
     for (k = 0; k < 2; k++) {
         for (i = 1; i < 10; i++) {
@@ -134,8 +121,8 @@ int main() {
             }
         }
     }
-    //hacemos los pasos necesarios
-    for (n = 1; n < pasos; n++) {
+    //hacemos los steps necesarios
+    for (n = 1; n < steps; n++) {
 
         //Posiciones nuevas
         for (i = 1; i < 10; i++) {
